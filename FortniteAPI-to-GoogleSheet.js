@@ -2,6 +2,20 @@ var request = require("request");
 const fs = require("fs");
 const readline = require("readline");
 const { google } = require("googleapis");
+const Discord = require('discord.js');
+const client = new Discord.Client();
+
+var discordToken = JSON.parse(fs.readFileSync("discordToken.json", 'utf8'))["discord-token"];
+var botChannel;
+
+client.on('ready', () => {
+  botChannel = client.channels.cache.get("704020279290101933");
+  getSkinArrayFromAPI(API_URL, LoadCredentials)
+  // Execute function every X seconds
+  setInterval(() => getSkinArrayFromAPI(API_URL, LoadCredentials), seconds * 1000);
+});
+
+client.login(discordToken);
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
@@ -23,10 +37,6 @@ var skinsArray = [];
 var skinCount = 0;
 var seconds = 100;
 
-// Execute function every X seconds
-getSkinArrayFromAPI(API_URL, LoadCredentials)
-setInterval(function() {getSkinArrayFromAPI(API_URL, LoadCredentials)}, seconds * 1000);
-
 function getSkinArrayFromAPI(url, callback) {
 
   // GET json data from API
@@ -39,7 +49,9 @@ function getSkinArrayFromAPI(url, callback) {
 
       // If API got updated
       if (jsonData.length > skinCount) {
-        console.log("Fortnite API got updated with ", jsonData.length - skinCount," new skins !");
+        var addedSkins = (jsonData.length - skinCount).toString();
+        console.log("Fortnite API got updated with " + addedSkins + " new skins !");
+        botChannel.send("Google Sheet updated with " + addedSkins + " new skins ! <@&704022772040335370>");
         skinCount = jsonData.length;
         skinsArray = [];
 
