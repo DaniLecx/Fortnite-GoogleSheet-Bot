@@ -4,7 +4,7 @@
   "description": "A simple bot for updating Google Sheets with Fortnite API data",
   "main": "FortniteAPI-to-GoogleSheet.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "FortniteAPI-to-GoogleSheet.js"
   },
   "author": "",
   "license": "ISC",
