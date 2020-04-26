@@ -21,7 +21,7 @@ const SHEET_PAGES = ['Skins!A3', 'Emotes!A3', 'Backpacks!A3', 'Gliders!A3', 'Pic
 
 var skinsArray = [];
 var skinCount = 0;
-var seconds = 60;
+var seconds = 100;
 
 // Execute function every X seconds
 getSkinArrayFromAPI(API_URL, LoadCredentials)
