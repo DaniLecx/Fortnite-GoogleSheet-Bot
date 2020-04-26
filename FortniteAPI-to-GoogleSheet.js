@@ -54,7 +54,8 @@ function getSkinArrayFromAPI(url, callback) {
         var addedSkins = (jsonData.length - skinCount).toString();
         console.log("Fortnite API got updated with " + addedSkins + " new skins !");
         // Ping role on discord
-        botChannel.send("Google Sheet updated with " + addedSkins + " new skins ! <@&704022772040335370>");
+        var url = "https://docs.google.com/spreadsheets/d/1gVDgnzNyMCafIWa-dBO3mgNUHmHzgA9O5sWbfQy2Yfg";
+        botChannel.send("Google Sheet updated with " + addedSkins + " new skins ! \nMise à jour de " + addedSkins + " skins sur le Google Sheet !\n<" + url + ">\n<@&704022772040335370>");
         skinCount = jsonData.length;
         skinsArray = [];
 
