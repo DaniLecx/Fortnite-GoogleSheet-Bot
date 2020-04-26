@@ -136,7 +136,7 @@ function appendSkins(oAuth) {
 
     var request = {
       // The ID of the spreadsheet to update, shown in URL
-      spreadsheetId: '1UFOogvLXZjPKRLL3_dXmBkg8iftbwV3vfl0ZcbFzfpI',
+      spreadsheetId: '1gVDgnzNyMCafIWa-dBO3mgNUHmHzgA9O5sWbfQy2Yfg',
       range: sheetRange,
       valueInputOption: 'USER_ENTERED',
       resource: {
