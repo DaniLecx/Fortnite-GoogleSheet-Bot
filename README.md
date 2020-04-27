@@ -1,6 +1,6 @@
 # FortniteSheetBot
 
-A NodeJS bot for updating a Google Sheet and sending a Discord notification when [Fortnite API](https://fortnite-api.com/) gets updated.
+A NodeJS bot for updating a [Google Sheet](https://docs.google.com/spreadsheets/d/1gVDgnzNyMCafIWa-dBO3mgNUHmHzgA9O5sWbfQy2Yfg/) and sending a Discord notification when Fortnite API gets updated.
 
 Google Sheet API is used to update skins on every sheet.
 
@@ -21,6 +21,13 @@ You need three tokens for the bot to work.
 
   *Stored in **discordToken.json** by default.*
 - Google Sheet credentials from [Google Sheets API](https://developers.google.com/sheets/api/quickstart/nodejs)
+
+<br />
+
+Set **SHEET_URL_ID** with your Sheet ID. <br/>
+*Example: docs.google.com/spreadsheets/d/**GET_YOUR_ID_HERE***
+
+<br />
 
 Install node dependencies
 ```javascript
