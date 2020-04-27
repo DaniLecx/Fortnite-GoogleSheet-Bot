@@ -25,7 +25,7 @@ You need three tokens for the bot to work.
 <br />
 
 Set **SHEET_URL_ID** with your Sheet ID. <br/>
-*Example: docs.google.com/spreadsheets/d/**GET_YOUR_ID_HERE***
+Example: *docs.google.com/spreadsheets/d/**GET_YOUR_SHEET_ID_HERE**/edit#gid=0*
 
 <br />
 
