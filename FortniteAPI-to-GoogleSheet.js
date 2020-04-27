@@ -5,37 +5,46 @@ const { google } = require("googleapis");
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-var discordToken = JSON.parse(fs.readFileSync("discordToken.json", 'utf8'))["discord-token"];
-var botChannel;
+
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const TOKEN_PATH = 'token.json';
+const SHEET_TOKEN_PATH = 'token.json';
+const SHEET_URL_ID = '1gVDgnzNyMCafIWa-dBO3mgNUHmHzgA9O5sWbfQy2Yfg';
 
-const API_URL = 'https://fortnite-api.com/cosmetics/br';
-const API_KEY_PATH = 'apiKey.json';
+const DISCORD_TOKEN_PATH = "discordToken.json";
+
+const FORTNITE_API_URL = 'https://fortnite-api.com/cosmetics/br';
+const FORTNITE_KEY_PATH = 'fortniteAPIKey.json';
+
+
+
 
 const options = {
-  url: API_URL,
-  headers: JSON.parse(fs.readFileSync(API_KEY_PATH, 'utf8'))
+  url: FORTNITE_API_URL,
+  headers: JSON.parse(fs.readFileSync(FORTNITE_KEY_PATH, 'utf8'))
 };
 
 // Hardcoded Google Sheet names
 const SKIN_CATEGORY_ARRAY = ['outfit', 'emote', 'backpack', 'glider', 'pickaxe', 'contrail', 'emoji', 'wrap', 'loadingscreen', 'spray', 'banner', 'music', 'pet', 'toy'];
 const SHEET_PAGES = ['Skins!A3', 'Emotes!A3', 'Backpacks!A3', 'Gliders!A3', 'Pickaxes!A3', 'Trails!A3', 'Emojis!A3', 'Wraps!A3', 'Loading Screens!A3', 'Sprays!A3', 'Banner!A3', 'Music!A3', 'Pet!A3', 'Toy!A3'];
 
+var SECONDS_BETWEEN_UPDATES = 100;
+
 var skinsArray = [];
 var skinCount = 0;
-var seconds = 100;
+var botChannel;
 
 // Wait for discord bot to be ready
 client.on('ready', () => {
   botChannel = client.channels.cache.get("704020279290101933");
-  getSkinArrayFromAPI(API_URL, LoadCredentials)
+  getSkinArrayFromAPI(FORTNITE_API_URL, LoadCredentials)
   // Execute function every X seconds
-  setInterval(() => getSkinArrayFromAPI(API_URL, LoadCredentials), seconds * 1000);
+  setInterval(() => getSkinArrayFromAPI(FORTNITE_API_URL, LoadCredentials), SECONDS_BETWEEN_UPDATES * 1000);
 });
 
+// Login discord bot
+var discordToken = JSON.parse(fs.readFileSync(DISCORD_TOKEN_PATH, 'utf8'))["discord-token"];
 client.login(discordToken);
 
 // Get all skins from fortnite-api.com/
@@ -54,7 +63,7 @@ function getSkinArrayFromAPI(url, callback) {
         var addedSkins = (jsonData.length - skinCount).toString();
         console.log("Fortnite API got updated with " + addedSkins + " new skins !");
         // Ping role on discord
-        var url = "https://docs.google.com/spreadsheets/d/1gVDgnzNyMCafIWa-dBO3mgNUHmHzgA9O5sWbfQy2Yfg";
+        var url = "https://docs.google.com/spreadsheets/d/" + SHEET_URL_ID;
         botChannel.send("Google Sheet updated with " + addedSkins + " new skins ! \nMise à jour de " + addedSkins + " skins sur le Google Sheet !\n<" + url + ">\n<@&704022772040335370>");
         skinCount = jsonData.length;
         skinsArray = [];
@@ -99,7 +108,7 @@ function authorize(credentials, callback) {
     client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
+  fs.readFile(SHEET_TOKEN_PATH, (err, token) => {
     if (err) return getNewToken(oAuth2Client, callback);
     oAuth2Client.setCredentials(JSON.parse(token));
     callback(oAuth2Client);
@@ -128,9 +137,9 @@ function getNewToken(oAuth2Client, callback) {
       if (err) return console.error('Error while trying to retrieve access token', err);
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+      fs.writeFile(SHEET_TOKEN_PATH, JSON.stringify(token), (err) => {
         if (err) console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
+        console.log('Token stored to', SHEET_TOKEN_PATH);
       });
       callback(oAuth2Client);
     });
@@ -152,7 +161,7 @@ function appendSkins(oAuth) {
 
     var request = {
       // The ID of the spreadsheet to update, shown in URL
-      spreadsheetId: '1gVDgnzNyMCafIWa-dBO3mgNUHmHzgA9O5sWbfQy2Yfg',
+      spreadsheetId: SHEET_URL_ID,
       range: sheetRange,
       valueInputOption: 'USER_ENTERED',
       resource: {
