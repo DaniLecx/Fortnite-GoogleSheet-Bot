@@ -6,16 +6,18 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 
 
-
-// If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
+// Tokens 
 const SHEET_TOKEN_PATH = 'token.json';
+const DISCORD_TOKEN_PATH = "discordToken.json";
+const FORTNITE_KEY_PATH = 'fortniteAPIKey.json';
+
+// Google Sheet API writes data to this sheet
 const SHEET_URL_ID = '1gVDgnzNyMCafIWa-dBO3mgNUHmHzgA9O5sWbfQy2Yfg';
 
-const DISCORD_TOKEN_PATH = "discordToken.json";
+// Discord bot notifies in this channel
+const DISCORD_CHANNEL_ID = "704020279290101933";
 
 const FORTNITE_API_URL = 'https://fortnite-api.com/cosmetics/br';
-const FORTNITE_KEY_PATH = 'fortniteAPIKey.json';
 
 
 
@@ -37,7 +39,7 @@ var botChannel;
 
 // Wait for discord bot to be ready
 client.on('ready', () => {
-  botChannel = client.channels.cache.get("704020279290101933");
+  botChannel = client.channels.cache.get(DISCORD_CHANNEL_ID);
   getSkinArrayFromAPI(FORTNITE_API_URL, LoadCredentials)
   // Execute function every X seconds
   setInterval(() => getSkinArrayFromAPI(FORTNITE_API_URL, LoadCredentials), SECONDS_BETWEEN_UPDATES * 1000);
@@ -124,7 +126,7 @@ function authorize(credentials, callback) {
 function getNewToken(oAuth2Client, callback) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
-    scope: SCOPES,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
   });
   console.log('Authorize this app by visiting this url:', authUrl);
   const rl = readline.createInterface({
