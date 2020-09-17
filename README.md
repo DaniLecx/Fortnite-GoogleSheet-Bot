@@ -14,22 +14,31 @@ Discord.js is used to send a notification when new skins are added to Google She
 
 You need three tokens for the bot to work.
 
-- Fortnite API token "x-api-key" from [fortnite-api.com](https://fortnite-api.com/profile)
-
+- Fortnite API token "x-api-key" from [fortnite-api.com](https://fortnite-api.com/profile)<br/>
   *Stored in **fortniteAPIKey.json** by default.*
-- Discord bot token "discord-token" from [Discord developer portal](https://discordapp.com/developers/applications)
 
+- Discord bot token "discord-token" from [Discord developer portal](https://discordapp.com/developers/applications)<br/>
   *Stored in **discordToken.json** by default.*
+  
 - Google Sheet credentials from [Google Sheets API](https://developers.google.com/sheets/api/quickstart/nodejs)
 
 <br />
 
-Set **SHEET_URL_ID** with your Sheet ID. <br/>
+You need to set variables in **FortniteAPI-to-GoogleSheet.js**
+
+- Set **SHEET_URL_ID** with your Google Sheet ID. <br/>
 Example: *docs.google.com/spreadsheets/d/**GET_YOUR_SHEET_ID_HERE**/edit#gid=0*
+
+- Set **DISCORD_CHANNEL_ID** with your Discord channel ID. <br/>
+Instructions on how to get your channel ID [here](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-).
 
 <br />
 
 Install node dependencies
 ```javascript
 npm install
+```
+Start the bot
+```javascript
+npm start
 ```

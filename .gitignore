@@ -86,3 +86,11 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+apiKey.json
+
+appVariables.json
+
+credentials.json
+
+token.json

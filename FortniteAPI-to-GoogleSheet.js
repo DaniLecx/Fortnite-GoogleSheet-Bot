@@ -158,7 +158,23 @@ function appendSkins(oAuth) {
 
     // Generate data to insert in Google Sheets
     skinsArray[i].forEach(skin => {
-      skinsInfo.push(new Array('=IMAGE("' + skin.images.smallIcon.url + '")', skin.id, skin.id.length, skin.name, skin.description));
+      var imageURL = "", skinID = "", skinIDLength = "", skinName = "", skinDescription = "";
+      if(skin)
+      {
+        if(skin.images && skin.images.smallIcon && skin.images.smallIcon.url)
+          imageURL = skin.images.smallIcon.url;
+        if(skin.id)
+        {
+          skinID = skin.id;
+          skinIDLength = skinID.length;
+        }
+        if(skin.name)
+          skinName = skin.name;
+        if(skin.description)
+          skinDescription = skin.description;
+      }
+        
+      skinsInfo.push(new Array('=IMAGE("' + imageURL + '")', skinID, skinIDLength, skinName, skinDescription));
     })
 
     var request = {
