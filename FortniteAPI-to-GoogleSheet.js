@@ -6,50 +6,52 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 
 
-// Tokens 
+// Secret, tokens and properties
+const SECRET_KEYS_PATH = 'secret-keys.json'
+const SECRET_KEYS = JSON.parse(fs.readFileSync(SECRET_KEYS_PATH, 'utf8'));
+
 const SHEET_TOKEN_PATH = 'token.json';
-const DISCORD_TOKEN_PATH = "discordToken.json";
-const FORTNITE_KEY_PATH = 'fortniteAPIKey.json';
+const APP_PROPERTIES_PATH = 'appProperties.json';
+const FORTNITE_API_URL = 'https://fortniteapi.io/v1/items/list?lang=en';
+var SECONDS_BETWEEN_UPDATES = 100;
 
-// Google Sheet API writes data to this sheet
-const SHEET_URL_ID = '1gVDgnzNyMCafIWa-dBO3mgNUHmHzgA9O5sWbfQy2Yfg';
-
-// Discord bot notifies in this channel
-const DISCORD_CHANNEL_ID = "704020279290101933";
-
-const FORTNITE_API_URL = 'https://fortnite-api.com/cosmetics/br';
-
-
-
-
+// Prepare request for API connection
 const options = {
   url: FORTNITE_API_URL,
-  headers: JSON.parse(fs.readFileSync(FORTNITE_KEY_PATH, 'utf8'))
+  headers: {
+    "Authorization": SECRET_KEYS['FORTNITEAPI_IO_KEY']
+  }
 };
 
 // Hardcoded Google Sheet names
-const SKIN_CATEGORY_ARRAY = ['outfit', 'emote', 'backpack', 'glider', 'pickaxe', 'contrail', 'emoji', 'wrap', 'loadingscreen', 'spray', 'banner', 'music', 'pet', 'toy'];
+const SKIN_CATEGORY_ARRAY = ['outfit', 'emote', 'backpack', 'glider', 'pickaxe', 'contrail', 'emoji', 'wrap', 'loadingscreen', 'spray', 'bannertoken', 'music', 'pet', 'toy'];
 const SHEET_PAGES = ['Skins!A3', 'Emotes!A3', 'Backpacks!A3', 'Gliders!A3', 'Pickaxes!A3', 'Trails!A3', 'Emojis!A3', 'Wraps!A3', 'Loading Screens!A3', 'Sprays!A3', 'Banner!A3', 'Music!A3', 'Pet!A3', 'Toy!A3'];
-
-var SECONDS_BETWEEN_UPDATES = 100;
 
 var skinsArray = [];
 var skinCount = 0;
+
+// Check if properties exist and get skin count
+if(fs.existsSync(APP_PROPERTIES_PATH) && JSON.parse(fs.readFileSync(APP_PROPERTIES_PATH, 'utf8'))['skin-count'] != undefined)
+{
+  var jsonSkinCount = JSON.parse(fs.readFileSync(APP_PROPERTIES_PATH, 'utf8'))['skin-count'];
+  if(jsonSkinCount != undefined && isNaN(jsonSkinCount) == false)
+    skinCount = jsonSkinCount;
+}
+
 var botChannel;
 
 // Wait for discord bot to be ready
 client.on('ready', () => {
-  botChannel = client.channels.cache.get(DISCORD_CHANNEL_ID);
+  botChannel = client.channels.cache.get(SECRET_KEYS['DISCORD_CHANNEL_ID']);
   getSkinArrayFromAPI(FORTNITE_API_URL, LoadCredentials)
   // Execute function every X seconds
   setInterval(() => getSkinArrayFromAPI(FORTNITE_API_URL, LoadCredentials), SECONDS_BETWEEN_UPDATES * 1000);
 });
 
 // Login discord bot
-var discordToken = JSON.parse(fs.readFileSync(DISCORD_TOKEN_PATH, 'utf8'))["discord-token"];
-client.login(discordToken);
+client.login(SECRET_KEYS['DISCORD_TOKEN']);
 
-// Get all skins from fortnite-api.com/
+// Get all skins from fortniteapi.io/
 function getSkinArrayFromAPI(url, callback) {
 
   // GET json data from API
@@ -58,21 +60,32 @@ function getSkinArrayFromAPI(url, callback) {
 
     if (res.statusCode == 200) {
 
-      var jsonData = JSON.parse(res.body).data;
+      var jsonData = JSON.parse(body);
 
       // If API got updated
-      if (jsonData.length > skinCount) {
-        var addedSkins = (jsonData.length - skinCount).toString();
+      if (jsonData.itemsCount > skinCount) {
+        var addedSkins = (jsonData.itemsCount - skinCount).toString();
         console.log("Fortnite API got updated with " + addedSkins + " new skins !");
         // Ping role on discord
-        var url = "https://docs.google.com/spreadsheets/d/" + SHEET_URL_ID;
+        var url = "https://docs.google.com/spreadsheets/d/" + SECRET_KEYS['GOOGLE_SHEET_URL_ID'];
         botChannel.send("Google Sheet updated with " + addedSkins + " new skins ! \nMise à jour de " + addedSkins + " skins sur le Google Sheet !\n<" + url + ">\n<@&704022772040335370>");
-        skinCount = jsonData.length;
+        // Save last skin count in file
+        var properties = { 'skin-count': jsonData.itemsCount}
+        var jsonString = JSON.stringify(properties, null, 4);
+        fs.writeFileSync(APP_PROPERTIES_PATH, jsonString, (err) => {console.log(err)});
+
         skinsArray = [];
 
         // Fill each category array with API data
         SKIN_CATEGORY_ARRAY.forEach(category => {
-          skinsArray.push(jsonData.filter(o => o.type.includes(category.toLowerCase())));
+          const sortedSkinArray = Object.keys(jsonData.items[category]).map(function (key) {
+            return jsonData.items[category][key];
+          })
+          .sort(function (skinA, skinB) {
+            return (skinA.id < skinB.id) ? -1 : (skinA.id > skinB.id) ? 1 : 0;
+          });
+
+          skinsArray.push(sortedSkinArray);
         })
 
         // Callback for update with Google Sheet API
@@ -146,7 +159,7 @@ function getNewToken(oAuth2Client, callback) {
       callback(oAuth2Client);
     });
   });
-}
+} 
 
 function appendSkins(oAuth) {
   const sheets = google.sheets({ version: 'v4', oAuth });
@@ -161,8 +174,8 @@ function appendSkins(oAuth) {
       var imageURL = "", skinID = "", skinIDLength = "", skinName = "", skinDescription = "";
       if(skin)
       {
-        if(skin.images && skin.images.smallIcon && skin.images.smallIcon.url)
-          imageURL = skin.images.smallIcon.url;
+        if(skin.images && skin.images.icon)
+          imageURL = skin.images.icon;
         if(skin.id)
         {
           skinID = skin.id;
@@ -179,7 +192,7 @@ function appendSkins(oAuth) {
 
     var request = {
       // The ID of the spreadsheet to update, shown in URL
-      spreadsheetId: SHEET_URL_ID,
+      spreadsheetId: SECRET_KEYS['GOOGLE_SHEET_URL_ID'],
       range: sheetRange,
       valueInputOption: 'USER_ENTERED',
       resource: {

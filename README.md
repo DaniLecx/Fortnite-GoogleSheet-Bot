@@ -12,25 +12,22 @@ Discord.js is used to send a notification when new skins are added to Google She
 
 ## Setup
 
-You need three tokens for the bot to work.
+You need add your keys in **secret-keys.json** for the bot to work.
 
-- Fortnite API token "x-api-key" from [fortnite-api.com](https://fortnite-api.com/profile)<br/>
-  *Stored in **fortniteAPIKey.json** by default.*
+- Discord bot token from [Discord developer portal](https://discordapp.com/developers/applications)<br/>
+  *Stored as **DISCORD_TOKEN***
 
-- Discord bot token "discord-token" from [Discord developer portal](https://discordapp.com/developers/applications)<br/>
-  *Stored in **discordToken.json** by default.*
+- Discord notification channel id<br/>
+  *Stored as **DISCORD_CHANNEL_ID***<br/>
+  Instructions on how to get your channel ID [here](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-).
+
+- Fortnite API key from [fortniteapi.io](https://fortniteapi.io/)<br/>
+  *Stored as **FORTNITEAPI_IO_KEY***
   
-- Google Sheet credentials from [Google Sheets API](https://developers.google.com/sheets/api/quickstart/nodejs)
-
+- Google Sheet credentials from [Google Sheets API](https://developers.google.com/sheets/api/quickstart/nodejs)<br/>
+  *Stored as **GOOGLE_SHEET_URL_ID***<br/>
+Example: docs.google.com/spreadsheets/d/GET_YOUR_SHEET_ID_HERE/
 <br />
-
-You need to set variables in **FortniteAPI-to-GoogleSheet.js**
-
-- Set **SHEET_URL_ID** with your Google Sheet ID. <br/>
-Example: *docs.google.com/spreadsheets/d/**GET_YOUR_SHEET_ID_HERE**/edit#gid=0*
-
-- Set **DISCORD_CHANNEL_ID** with your Discord channel ID. <br/>
-Instructions on how to get your channel ID [here](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-).
 
 <br />
 
