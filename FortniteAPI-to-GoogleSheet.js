@@ -74,6 +74,7 @@ function getSkinArrayFromAPI(url, callback) {
         var jsonString = JSON.stringify(properties, null, 4);
         fs.writeFileSync(APP_PROPERTIES_PATH, jsonString, (err) => {console.log(err)});
 
+        skinCount = jsonData.itemsCount;
         skinsArray = [];
 
         // Fill each category array with API data
